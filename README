@@ -1,0 +1,10 @@
+
+All DB credentials are in config.php file.
+
+There are two flags defined:
+1) debug - when set to 1, will print out postmeta INSERT statements.
+2) verbose - when set to 1, no INSERT statements will be executed but rest of process will run as usual.
+
+If you want to see what the script will do, run like this:
+
+http://localhost:8888/development/index.php?debug=1&&verbose=1
