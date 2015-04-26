@@ -22,7 +22,7 @@ function connectToDB($host, $port, $user, $password, $db) {
 	return $link;
 }
 
-function processPostMetaEntry($ID,$newID) {
+function processPostMetaEntry($ID,$newID,$imagePostID) {
 
 	global $link_old;
 	global $link_new;
@@ -52,6 +52,10 @@ function processPostMetaEntry($ID,$newID) {
 		if ($meta_key == '_zoner_videos') {
 			$meta_row[3] = 'a:1:{i:0;a:1:{s:17:"_zoner_link_video";s:34:"'.$meta_row["meta_value"].'";}}';
 			$meta_row[3] = str_replace('https://','//player.',$meta_row[3]);
+		}
+
+		if ($meta_key == '_thumbnail_id') {
+			$meta_row[3] = $imagePostID;
 		}
 
 		$q="INSERT INTO `hjwp_postmeta`
@@ -153,6 +157,10 @@ function insertIntoNewDB($data,$parentID) {
 		$result = $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
 	}
 
+	if ($_GET['debug']) {
+		echo "<br>".$q."<br><br>";
+	}
+
 	$q = "SELECT
 			ID
 		FROM
@@ -191,7 +199,7 @@ function getPostAttachments($ID,$newID) {
 
 	while ($row=mysqli_fetch_array($posts_result)) {
 		//var_dump($row);
-		insertIntoNewDB($row,$newID);
+		$imagePostID = insertIntoNewDB($row,$newID);
 
 		$q="INSERT INTO `hjwp_postmeta`
 			(
@@ -212,8 +220,11 @@ function getPostAttachments($ID,$newID) {
 			$link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
 		}
 
+		if ($_GET['debug']) {
+			echo "<br>".$q."<br>";
+		}
 	}
-
+	return $imagePostID;
 }
 
 function checkMetaKeys() {

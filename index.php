@@ -27,9 +27,9 @@ while ($row=mysqli_fetch_array($posts_result)) {
 		echo "<br>Processing Post with original ID: ".$ID."<br>";
 		$newID = insertIntoNewDB($row,'');
 
-		processPostMetaEntry($ID,$newID);
+		$imagePostID = getPostAttachments($ID,$newID);
 
-		getPostAttachments($ID,$newID);
+		processPostMetaEntry($ID,$newID,$imagePostID);
 
 		echo "---------------------------------------------<br>";
 
