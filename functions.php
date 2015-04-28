@@ -48,7 +48,6 @@ function processPostMetaEntry($ID,$newID,$imagePostID) {
 		$meta_key = str_replace('video', 'videos', $meta_key);
 		$meta_key = str_replace('sqft', 'area', $meta_key);
 
-//player.vimeo.com/video/122471751
 		if ($meta_key == '_zoner_videos') {
 			$meta_row[3] = 'a:1:{i:0;a:1:{s:17:"_zoner_link_video";s:34:"'.$meta_row["meta_value"].'";}}';
 			$meta_row[3] = str_replace('https://','//player.',$meta_row[3]);
@@ -175,7 +174,7 @@ function insertIntoNewDB($data,$parentID) {
 	echo "Inserting post with new ID ".$ID." original ID: ".$data[0]." from ".$data[2]." by authorID: ".$data[1]." of type ".$post_type."<br>";
 
 	return $ID;
-//mysqli_query($q,$link_new);
+
 }
 
 function getPostAttachments($ID,$newID) {
@@ -198,8 +197,12 @@ function getPostAttachments($ID,$newID) {
 	$posts_result = $link_old->query($q) or die("Error in the consult.." . mysqli_error($link_old));
 
 	while ($row=mysqli_fetch_array($posts_result)) {
-		//var_dump($row);
+
+		echo $row['ID'];
 		$imagePostID = insertIntoNewDB($row,$newID);
+
+		echo "<br>Process attachment post metas for attachment post with new ID ".$imagePostID."...";
+		echo processPostMetaEntry($row['ID'],$imagePostID);
 
 		$q="INSERT INTO `hjwp_postmeta`
 			(
