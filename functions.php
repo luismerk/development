@@ -137,6 +137,7 @@ function processAuthorID($newID,$imagePostID) {
     echo "<br/>Current post author ID: $authorID<br/><br/>";
 
     if ($authorID == $realtorID) {return;}
+    if ($realtorID == '') {return;}
     $new_post_author = $realtorID;
 
     $q = "UPDATE hjwp_posts
@@ -158,12 +159,16 @@ function processAuthorID($newID,$imagePostID) {
     echo "UPDATING Attachment Author ID with Realtor ID: $new_post_author<br/>";
 
     $q = "UPDATE hjwp_postmeta
-        SET meta_value = $videographerID
+        SET meta_value = $authorID
         WHERE
             post_id = $newID
             AND
             meta_key = '_zoner_filmed_by_name'
         ";
+
+    if ($_GET['debug'] && strlen($q)>0) {
+        echo "<br>".$q."<br>";
+    }
 
     $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
     echo "<br/>UPDATE _zoner_filmed_by_name with $videographerID for Post ID: $newID<br/>";
