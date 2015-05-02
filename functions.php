@@ -65,7 +65,7 @@ function processPostMetaEntry($ID,$newID,$imagePostID) {
 				`meta_value`
 			)
 			VALUES (
-				$meta_row[0],
+				NULL,
 				'$newID',
 				'$meta_key',
 				'".addslashes($meta_row[3])."'
@@ -202,7 +202,7 @@ function getPostAttachments($ID,$newID) {
 		$imagePostID = insertIntoNewDB($row,$newID);
 
 		echo "<br>Process attachment post metas for attachment post with new ID ".$imagePostID."...";
-		echo processPostMetaEntry($row['ID'],$imagePostID);
+		processPostMetaEntry($row['ID'],$imagePostID);
 
 		$q="INSERT INTO `hjwp_postmeta`
 			(
