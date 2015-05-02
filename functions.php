@@ -49,6 +49,12 @@ function processPostMetaEntry($ID,$newID,$imagePostID) {
 		$meta_key = str_replace('sqft', 'area', $meta_key);
 
 		if ($meta_key == '_zoner_videos') {
+			if (!strpos($meta_row["meta_value"], "video")) {
+				echo "<br/>UPDATING VIDEO PATH<br/> Old: ".$meta_row["meta_value"];
+				//split the string, insert "video/", update meta_value
+				$meta_row["meta_value"] = substr_replace($meta_row["meta_value"], "/video", -10, 0);
+				echo "<br/>new: ".$meta_row["meta_value"];
+			}
 			$meta_row[3] = 'a:1:{i:0;a:1:{s:17:"_zoner_link_video";s:34:"'.$meta_row["meta_value"].'";}}';
 			$meta_row[3] = str_replace('https://','//player.',$meta_row[3]);
 		}
