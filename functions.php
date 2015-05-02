@@ -92,6 +92,84 @@ function processPostMetaEntry($ID,$newID,$imagePostID) {
 
 }
 
+function processAuthorID($newID,$imagePostID) {
+
+    global $link_new;
+
+    $q = "SELECT
+            *
+        FROM
+            `hjwp_postmeta`
+        WHERE
+            post_id = $newID
+        ";
+
+
+    echo "<br/>PROCESSING Post Author...<br/>";
+    echo "<br>Getting postmeta for new post ID: ".$newID."<br>";
+    $result = $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
+
+
+    while ($row=mysqli_fetch_array($result)) {
+
+        if ($row['meta_key'] == '_zoner_listed_by_name') {
+            $realtorID = $row['meta_value'];
+            echo "<br/>Realtor ID: $realtorID";
+        }
+        if ($row['meta_key'] == '_zoner_filmed_by_name') {
+            $videographerID = $row['meta_value'];
+            echo "<br/>Videographer ID: $videographerID";
+        }
+    }
+
+
+    $q="SELECT
+            post_author
+        FROM
+            `hjwp_posts`
+        WHERE
+            ID = $newID
+        ";
+
+    $result = $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
+    $authorID = (mysqli_fetch_array($result)["post_author"]);
+
+    echo "<br/>Current post author ID: $authorID<br/><br/>";
+
+    if ($authorID == $realtorID) {return;}
+    $new_post_author = $realtorID;
+
+    $q = "UPDATE hjwp_posts
+        SET post_author = $new_post_author
+        WHERE
+            ID = $newID
+        ";
+
+    $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
+    echo "UPDATING Post Author ID with Realtor ID: $new_post_author<br/>";
+
+    $q = "UPDATE hjwp_posts
+        SET post_author = $new_post_author
+        WHERE
+            ID = $imagePostID
+        ";
+
+    $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
+    echo "UPDATING Attachment Author ID with Realtor ID: $new_post_author<br/>";
+
+    $q = "UPDATE hjwp_postmeta
+        SET meta_value = $videographerID
+        WHERE
+            post_id = $newID
+            AND
+            meta_key = '_zoner_filmed_by_name'
+        ";
+
+    $link_new->query($q) or die("Error in the consult.." . mysqli_error($link_new) . "<br>" . $q);
+    echo "<br/>UPDATE _zoner_filmed_by_name with $videographerID for Post ID: $newID<br/>";
+
+}
+
 function insertIntoNewDB($data,$parentID) {
 
 	global $link_new;
